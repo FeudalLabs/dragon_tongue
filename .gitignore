@@ -1,0 +1,154 @@
+# Build outputs
+/dragontongue
+/dragonlang
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+build/
+bin/
+obj/
+*.o
+*.obj
+*.a
+*.lib
+
+# Test artifacts
+tests/test_*
+!tests/test_*.c          # Keep test source files
+tests/*.log
+tests/*.actual
+tests/*.expected
+*.test
+*.bench
+
+# Debug files
+*.dSYM/
+*.gcov
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+coverage/
+*.valgrind
+*.out.txt
+
+# Compiler artifacts
+*.bc                    # LLVM bitcode
+*.ll                    # LLVM IR
+*.s                     # Assembly
+*.i                     # Preprocessed
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+.DS_Store
+Thumbs.db
+*.bak
+*.orig
+*.rej
+
+# Editor files
+.history
+.vscode/
+.idea/
+*.sublime-*
+.project
+.classpath
+.settings/
+.cproject
+*.code-workspace
+
+# Documentation build 
+docs/_build/
+docs/html/
+docs/latex/
+docs/epub/
+*.aux
+*.log
+*.out
+*.toc
+
+# Package manager (none in v1, but for future)
+node_modules/
+vendor/
+.packages/
+package-lock.json
+Cargo.lock
+go.sum
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.crt
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+*.pid
+*.seed
+
+# Database files 
+*.db
+*.sqlite
+*.sqlite3
+
+# Secret/credential files
+*.secret
+*.key
+*.pem
+*.crt
+*.cer
+*.p12
+credentials.json
+secrets.json
+config.local.*
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+.cache
+.pytest_cache/
+
+# Runtime files (created by programs)
+runtime/*.o
+runtime/*.exe
+examples/*.exe
+examples/*.out
+*.core
+core.*
+
+# Archive files 
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Backup of sensitive files
+*.password
+*.token

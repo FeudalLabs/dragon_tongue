@@ -1,0 +1,27 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.c text diff=cpp
+*.h text diff=cpp
+*.dt text diff=python
+*.md text diff=markdown
+Makefile text eol=lf
+
+# Binary files
+*.exe binary
+*.o binary
+*.so binary
+*.dll binary
+
+# Documentation
+*.md text
+*.txt text
+
+# Configs
+*.json text
+*.toml text
+*.yaml text
+*.yml text
+.gitignore text
+.gitattributes text
