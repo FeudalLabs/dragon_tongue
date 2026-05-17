@@ -1,0 +1,45 @@
+// Test all DragonTongue features
+
+// Variables
+let name = "DragonTongue"
+var counter = 0
+
+// Struct
+struct User {
+    id: Int
+    name: String
+}
+
+// Function with arrow return type
+fn greet(user: User) -> String {
+    return "Hello, " + user.name
+}
+
+// If/else
+if counter == 0 {
+    println("Counter is zero")
+} else {
+    println("Counter is not zero")
+}
+
+// Logical operators
+let result = (counter < 10) && (counter >= 0)
+
+// Concurrency
+parallel {
+    user = fetch_user(1)
+    data = fetch_data()
+}
+
+let handle = spawn background_task(42)
+let output = await handle
+
+// Struct instantiation with dot access
+let alice = User{id: 1, name: "Alice"}
+println(alice.name)
+
+// Match (future feature)
+match alice.id {
+    1 -> println("Found Alice")
+    _ -> println("Unknown user")
+}

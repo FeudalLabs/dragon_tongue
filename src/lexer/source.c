@@ -1,5 +1,7 @@
 #include "source.h"
 #include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 Source* source_from_file(const char* filename, Arena* arena) {
     FILE* file = fopen(filename, "rb");
