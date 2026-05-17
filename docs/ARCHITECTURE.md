@@ -159,6 +159,51 @@ void channel_send(channel_t* ch, void* value);
 void* channel_recv(channel_t* ch);
 ```
 
+## Source Reader (`src/lexer/source.c`)
+
+The Source Reader is responsible for loading source files and providing character-by-character access with line/column tracking.
+
+### API Reference
+
+| Function | Purpose |
+|----------|---------|
+| `source_from_file()` | Load a .dt file from disk |
+| `source_from_string()` | Create source from string (testing) |
+| `source_peek()` | Look at current character without consuming |
+| `source_peek_ahead()` | Look ahead N characters |
+| `source_advance()` | Consume and return current character |
+| `source_is_eof()` | Check if end of file reached |
+| `source_skip_whitespace()` | Skip spaces, tabs, newlines |
+| `source_get_location()` | Get current line/column |
+
+### Implementation Details
+
+**Line/Column Tracking:**
+- Lines start at 1
+- Columns start at 1
+- Newline (`\n`) increments line, resets column to 1
+- All other characters increment column
+
+**Memory Management:**
+- All Source structs are allocated from the arena
+- File content is copied into arena memory
+- No manual free needed - arena freed at program exit
+
+### Example Usage
+
+```c
+Source* src = source_from_file("program.dt", arena);
+
+while (!source_is_eof(src)) {
+    char c = source_advance(src);
+    int line, col;
+    source_get_location(src, &line, &col);
+    printf("Char '%c' at %d:%d\n", c, line, col);
+}
+```
+
+
+
 ## Directory Structure
 ```
 dragontongue/
