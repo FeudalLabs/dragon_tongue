@@ -1,0 +1,10 @@
+{
+  "iconDefinitions": {
+    "dragontongue-file": {
+      "iconPath": "icons/dragontongue-light.png"
+    }
+  },
+  "fileExtensions": {
+    "dt": "dragontongue-file"
+  }
+}

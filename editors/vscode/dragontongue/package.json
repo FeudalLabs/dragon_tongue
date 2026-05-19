@@ -1,0 +1,36 @@
+{
+  "name": "dragontongue",
+  "displayName": "DragonTongue",
+  "description": "DragonTongue programming language support",
+  "version": "0.0.1",
+  "publisher": "dragontongue",
+  "icon": "icons/dragontongue-light.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Themes"
+  ],
+  "contributes": {
+  "languages": [
+    {
+      "id": "dragontongue",
+      "aliases": ["DragonTongue", "dragontongue", "dt"],
+      "extensions": [".dt"],
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./icons/dragontongue-light.png",
+        "dark": "./icons/dragontongue-dark.png"
+      }
+    }
+  ],
+  "grammars": [
+    {
+      "language": "dragontongue",
+      "scopeName": "source.dragontongue",
+      "path": "./syntaxes/dragontongue.tmLanguage.json"
+    }
+  ]
+ }
+}

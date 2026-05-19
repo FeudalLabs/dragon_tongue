@@ -2,6 +2,7 @@
 #include "lexer/source.h"
 #include "lexer/scanner.h"
 #include "parser/parser.h"
+#include "semantic/analyzer.h"
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -21,6 +22,7 @@ int main(int argc, char** argv) {
     Scanner* scanner = scanner_new(source, arena);
     Parser* parser = parser_new(scanner, arena);
     
+    printf("Parsing...\n");
     ASTNode* ast = parser_parse_program(parser);
     
     if (parser_had_error(parser)) {
@@ -29,8 +31,19 @@ int main(int argc, char** argv) {
         return 1;
     }
     
-    // Only print ONCE
+    printf("AST:\n");
     ast_print(ast, 0);
+    
+    printf("\nSemantic Analysis:\n");
+    SemanticAnalyzer* analyzer = analyzer_new(arena);
+    analyzer_analyze(analyzer, ast);
+    
+    if (analyzer_had_error(analyzer)) {
+        fprintf(stderr, "Semantic analysis failed.\n");
+        analyzer_print_errors(analyzer);
+        arena_free(arena);
+        return 1;
+    }
     
     arena_free(arena);
     return 0;
