@@ -1,0 +1,10 @@
+let x = 42
+let y = 10
+
+if x > y {
+    let result = 100
+} else {
+    let other = 200
+}
+
+println("Done")

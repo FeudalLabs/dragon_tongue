@@ -1,0 +1,6 @@
+let name = "DragonTongue"
+let version = 1
+
+fn add(a, b) {
+    return a + b
+}

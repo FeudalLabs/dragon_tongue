@@ -1,0 +1,6 @@
+let x = 42
+let name = "DragonTongue"
+
+fn add(a, b) {
+    return a + b
+}

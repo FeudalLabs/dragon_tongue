@@ -1,0 +1,10 @@
+let x = 42
+let name = "DragonTongue"
+
+fn add(a, b) {
+    return a + b
+}
+
+if x > 10 {
+    println("big")
+}

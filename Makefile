@@ -1,6 +1,5 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -g -I./src
-DEBUG_FLAGS = -DDEBUG
 TARGET = dragontongue
 
 # Find all source files
@@ -8,7 +7,9 @@ SRCS = src/main.c \
        src/arena.c \
        src/lexer/source.c \
        src/lexer/token.c \
-       src/lexer/scanner.c
+       src/lexer/scanner.c \
+       src/parser/ast.c \
+       src/parser/parser.c
 
 # Convert .c to .o
 OBJS = $(SRCS:.c=.o)
@@ -24,9 +25,9 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Debug build
-debug: CFLAGS += $(DEBUG_FLAGS)
-debug: $(TARGET)
+# Clean build artifacts
+clean:
+	rm -f $(OBJS) $(TARGET) tests/test_arena tests/test_source tests/test_scanner
 
 # Test targets
 test-arena:
@@ -44,22 +45,8 @@ test-scanner:
 # Run all tests
 test: test-arena test-source test-scanner
 
-# Clean build artifacts
-clean:
-	rm -f $(OBJS) $(TARGET) tests/test_arena tests/test_source tests/test_scanner
-
-# Clean everything including documentation cache
-distclean: clean
-	rm -rf docs/_build
-
 # Run the compiler on a test file
 run: $(TARGET)
 	./$(TARGET) examples/test.dt
 
-# Install to system (optional)
-install: $(TARGET)
-	cp $(TARGET) /usr/local/bin/
-	mkdir -p /usr/local/lib/dragontongue
-	cp -r runtime/* /usr/local/lib/dragontongue/ 2>/dev/null || true
-
-.PHONY: all debug test-arena test-source test-scanner test clean distclean run install
+.PHONY: all test clean run

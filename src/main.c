@@ -1,47 +1,36 @@
 #include "dragontongue.h"
 #include "lexer/source.h"
 #include "lexer/scanner.h"
+#include "parser/parser.h"
 
 int main(int argc, char** argv) {
-    printf("DragonTongue Compiler v%s\n", DRAGONTONGUE_VERSION);
-    
     if (argc < 2) {
         fprintf(stderr, "Usage: dragontongue <source.dt>\n");
         return 1;
     }
     
-    printf("Compiling: %s\n", argv[1]);
-    
-    Arena* arena = arena_new(1024 * 1024);  // 1MB arena
+    Arena* arena = arena_new(1024 * 1024);
     
     Source* source = source_from_file(argv[1], arena);
     if (!source) {
-        fprintf(stderr, "Failed to load source file\n");
+        fprintf(stderr, "Error: Cannot open file '%s'\n", argv[1]);
         arena_free(arena);
         return 1;
     }
     
     Scanner* scanner = scanner_new(source, arena);
+    Parser* parser = parser_new(scanner, arena);
     
-    printf("\nTokens:\n");
-    Token token;
-    do {
-        token = scanner_next_token(scanner);
-        printf("  %s", token_type_to_string(token.type));
-        if (token.type == TOKEN_IDENTIFIER) {
-            printf("(%.*s)", token.length, token.start);
-        } else if (token.type == TOKEN_NUMBER) {
-            printf("(%lld)", token.int_value);
-        } else if (token.type == TOKEN_STRING_LITERAL) {
-            printf("(\"%s\")", token.string_value);
-        }
-        printf("\n");
-    } while (token.type != TOKEN_EOF && token.type != TOKEN_ERROR);
+    ASTNode* ast = parser_parse_program(parser);
     
-    if (scanner_has_errors(scanner)) {
-        printf("\nErrors:\n");
-        scanner_print_errors(scanner);
+    if (parser_had_error(parser)) {
+        fprintf(stderr, "Parsing failed with errors.\n");
+        arena_free(arena);
+        return 1;
     }
+    
+    // Only print ONCE
+    ast_print(ast, 0);
     
     arena_free(arena);
     return 0;
