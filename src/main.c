@@ -3,6 +3,7 @@
 #include "lexer/scanner.h"
 #include "parser/parser.h"
 #include "semantic/analyzer.h"
+#include "codegen/cgen.h"
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -31,19 +32,41 @@ int main(int argc, char** argv) {
         return 1;
     }
     
-    printf("AST:\n");
-    ast_print(ast, 0);
-    
-    printf("\nSemantic Analysis:\n");
+    printf("Semantic Analysis...\n");
     SemanticAnalyzer* analyzer = analyzer_new(arena);
     analyzer_analyze(analyzer, ast);
     
     if (analyzer_had_error(analyzer)) {
         fprintf(stderr, "Semantic analysis failed.\n");
-        analyzer_print_errors(analyzer);
         arena_free(arena);
         return 1;
     }
+    
+    printf("Generating C code...\n");
+    CodeGenerator* cgen = cgen_new("output.c", analyzer->symbols, arena);
+    cgen_generate(cgen, ast);
+    
+    if (cgen_had_error(cgen)) {
+        fprintf(stderr, "Code generation failed.\n");
+        cgen_close(cgen);
+        arena_free(arena);
+        return 1;
+    }
+    
+    cgen_close(cgen);
+    
+    printf("Compiling C code...\n");
+    int compile_result = system("gcc -o output runtime/runtime.c output.c -I./runtime 2>&1");
+    
+    if (compile_result != 0) {
+        fprintf(stderr, "C compilation failed. See errors above.\n");
+        arena_free(arena);
+        return 1;
+    }
+    
+    printf("\nRunning program:\n");
+    system("./output");
+    printf("\n");
     
     arena_free(arena);
     return 0;

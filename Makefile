@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -g -I./src
+CFLAGS = -Wall -Wextra -std=c11 -g -I./src -I./runtime
 TARGET = dragontongue
 
 # Find all source files
@@ -12,7 +12,8 @@ SRCS = src/main.c \
        src/parser/parser.c \
        src/semantic/symbol.c \
        src/semantic/type.c \
-       src/semantic/analyzer.c
+       src/semantic/analyzer.c \
+       src/codegen/cgen.c
 
 # Convert .c to .o
 OBJS = $(SRCS:.c=.o)
@@ -30,7 +31,7 @@ $(TARGET): $(OBJS)
 
 # Clean build artifacts
 clean:
-	rm -f $(OBJS) $(TARGET) tests/test_arena tests/test_source tests/test_scanner
+	rm -f $(OBJS) $(TARGET) tests/test_arena tests/test_source tests/test_scanner output.c output
 
 # Test targets
 test-arena:
@@ -48,8 +49,10 @@ test-scanner:
 # Run all tests
 test: test-arena test-source test-scanner
 
-# Run the compiler on a test file
-run: $(TARGET)
+# Compile and run a DragonTongue file
+compile: $(TARGET)
 	./$(TARGET) examples/test.dt
+	gcc -o output runtime/runtime.c output.c
+	./output
 
-.PHONY: all test clean run
+.PHONY: all test clean run compile

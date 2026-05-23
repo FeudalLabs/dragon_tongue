@@ -1,10 +1,18 @@
+let greeting = "Hello, DragonTongue!"
+println(greeting)
+
 let x = 42
-let name = "DragonTongue"
+let y = 10
+
+if x > y {
+    println("x is greater")
+} else {
+    println("y is greater")
+}
 
 fn add(a, b) {
     return a + b
 }
 
-if x > 10 {
-    println("big")
-}
+let sum = add(5, 3)
+println("Sum: " + to_string(sum))

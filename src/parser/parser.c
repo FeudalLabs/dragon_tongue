@@ -15,13 +15,17 @@ static char* my_strndup(const char* s, size_t n) {
     return new_str;
 }
 
+static char* my_strdup(const char* s) {
+    if (!s) return NULL;
+    return my_strndup(s, strlen(s));
+}
+
 static ASTNode* parse_statement(Parser* p);
 static ASTNode* parse_expression(Parser* p);
 static ASTNode* parse_equality(Parser* p);
 static ASTNode* parse_comparison(Parser* p);
 static ASTNode* parse_term(Parser* p);
 static ASTNode* parse_factor(Parser* p);
-static ASTNode* parse_call(Parser* p);
 static ASTNode* parse_primary(Parser* p);
 static ASTNode* parse_block(Parser* p);
 
@@ -97,27 +101,13 @@ static ASTNode* parse_term(Parser* p) {
 
 // Factor: * /
 static ASTNode* parse_factor(Parser* p) {
-    ASTNode* node = parse_call(p);
+    ASTNode* node = parse_primary(p);
     
     while (match(p, TOKEN_STAR) || match(p, TOKEN_SLASH)) {
         TokenType op = p->previous.type;
-        ASTNode* right = parse_call(p);
+        ASTNode* right = parse_primary(p);
         const char* op_str = (op == TOKEN_STAR) ? "*" : "/";
         node = new_binary_op((char*)op_str, node, right, p->previous.line, p->previous.column);
-    }
-    return node;
-}
-
-// Function call
-static ASTNode* parse_call(Parser* p) {
-    ASTNode* node = parse_primary(p);
-    
-    if (match(p, TOKEN_LPAREN)) {
-        while (!check(p, TOKEN_RPAREN) && !check(p, TOKEN_EOF)) {
-            parse_expression(p);
-            if (!match(p, TOKEN_COMMA)) break;
-        }
-        consume(p, TOKEN_RPAREN, "Expected ')' after arguments");
     }
     return node;
 }
@@ -205,23 +195,19 @@ static ASTNode* parse_block(Parser* p) {
 static ASTNode* parse_if_statement(Parser* p) {
     int line = p->current.line;
     int col = p->current.column;
-    advance(p); // consume 'if'
+    advance(p);
     
     ASTNode* condition = parse_expression(p);
     if (!condition) return NULL;
     
-    // Parse then branch (must be a block)
     ASTNode* then_branch = parse_block(p);
     if (!then_branch) return NULL;
     
-    // Parse else branch (optional)
     ASTNode* else_branch = NULL;
     if (match(p, TOKEN_ELSE)) {
         if (check(p, TOKEN_IF)) {
-            // else if - parse as nested if
             else_branch = parse_if_statement(p);
         } else {
-            // else block
             else_branch = parse_block(p);
         }
     }
@@ -328,6 +314,7 @@ static ASTNode* parse_primary(Parser* p) {
             
             advance(p);
             
+            // Check if this is a function call
             if (match(p, TOKEN_LPAREN)) {
                 ASTNode* args = NULL;
                 ASTNode* last_arg = NULL;
@@ -352,12 +339,21 @@ static ASTNode* parse_primary(Parser* p) {
                 if (is_builtin) {
                     node = new_builtin_func(name, args, line, col);
                 } else {
-                    node = new_variable(name, line, col);
+                    // Create a CALL node for user function calls
+                    Call* call = (Call*)malloc(sizeof(Call));
+                    call->base.type = NODE_CALL;
+                    call->base.line = line;
+                    call->base.column = col;
+                    call->base.next = NULL;
+                    call->name = my_strdup(name);
+                    call->arguments = args;
+                    node = (ASTNode*)call;
                 }
                 free(name);
                 break;
             }
             
+            // Regular variable reference
             node = new_variable(name, line, col);
             free(name);
             break;

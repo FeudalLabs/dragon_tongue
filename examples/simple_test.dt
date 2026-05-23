@@ -1,0 +1,11 @@
+let x = 42
+let y = 10
+
+if x > y {
+    println("x is greater")
+} else {
+    println("y is greater")
+}
+
+let sum = 5 + 3
+println(sum)

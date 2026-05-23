@@ -1,8 +1,0 @@
-// This file contains intentional errors
-
-let x = "unterminated string
-
-let y = 42
-let 123invalid = "bad identifier"
-
-let z = @invalid_character

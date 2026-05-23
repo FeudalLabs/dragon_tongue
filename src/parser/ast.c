@@ -140,6 +140,17 @@ ASTNode* new_return_stmt(ASTNode* value, int line, int col) {
     return (ASTNode*)stmt;
 }
 
+// ADDED: new_call function
+ASTNode* new_call(char* name, ASTNode* arguments, int line, int col) {
+    Call* call = calloc(1, sizeof(Call));
+    call->base.type = NODE_CALL;
+    call->base.line = line;
+    call->base.column = col;
+    call->name = my_strdup(name);
+    call->arguments = arguments;
+    return (ASTNode*)call;
+}
+
 static void print_indent(int indent) {
     for (int i = 0; i < indent; i++) {
         printf("  ");
@@ -253,6 +264,21 @@ void ast_print(ASTNode* node, int indent) {
             break;
         }
         
+        // ADDED: NODE_CALL handling
+        case NODE_CALL: {
+            Call* call = (Call*)node;
+            print_indent(indent);
+            printf("Call: %s\n", call->name);
+            if (call->arguments) {
+                ASTNode* arg = call->arguments;
+                while (arg) {
+                    ast_print(arg, indent + 1);
+                    arg = arg->next;
+                }
+            }
+            break;
+        }
+        
         case NODE_RETURN_STMT: {
             ReturnStmt* stmt = (ReturnStmt*)node;
             print_indent(indent);
@@ -317,6 +343,11 @@ void ast_free(ASTNode* node) {
         Function* func = (Function*)node;
         if (func->body) ast_free(func->body);
         free(func->name);
+    // ADDED: NODE_CALL freeing
+    } else if (node->type == NODE_CALL) {
+        Call* call = (Call*)node;
+        if (call->arguments) ast_free(call->arguments);
+        free(call->name);
     }
     
     free(node);
